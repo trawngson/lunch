@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+dist/
+.vinext/
+outputs/
+.env
+.env.*
+!.env.example
+.DS_Store
+.wrangler/
+*.log

@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-07-21T12:00:00.000Z",
+  "timezone": "Asia/Ho_Chi_Minh",
+  "sample": true,
+  "days": [
+    {
+      "date": "2026-07-21",
+      "meals": [
+        {
+          "name": "Ăn trưa",
+          "totalKcal": 745.6,
+          "dishes": [
+            { "name": "Thịt ba chỉ kho tàu", "kcal": 302.7 },
+            { "name": "Mực xào dứa thơm", "kcal": 38.5 },
+            { "name": "Ngồng cải xào tỏi", "kcal": 23.3 },
+            { "name": "Canh rau ngót giò sống", "kcal": 11.9 },
+            { "name": "Cơm trắng", "kcal": 258 },
+            { "name": "Kem", "kcal": 111.2 }
+          ]
+        },
+        {
+          "name": "Ăn phụ",
+          "totalKcal": 212,
+          "dishes": [{ "name": "Cánh gà nướng", "kcal": 212 }]
+        }
+      ]
+    },
+    { "date": "2026-07-22", "meals": [] },
+    { "date": "2026-07-23", "meals": [] },
+    { "date": "2026-07-24", "meals": [] },
+    { "date": "2026-07-25", "meals": [] },
+    { "date": "2026-07-26", "meals": [] },
+    { "date": "2026-07-27", "meals": [] },
+    { "date": "2026-07-28", "meals": [] }
+  ]
+}
