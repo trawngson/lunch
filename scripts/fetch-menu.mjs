@@ -1,9 +1,9 @@
 import { mkdir, writeFile } from "node:fs/promises";
 
 const TIME_ZONE = "Asia/Ho_Chi_Minh";
-const token = process.env.VIN_TOKEN;
-const studentCode = process.env.VIN_STUDENT_CODE;
-const apiUrl = process.env.VIN_API_URL;
+const token = process.env.VIN_TOKEN?.trim().replace(/^Bearer\s+/i, "");
+const studentCode = process.env.VIN_STUDENT_CODE?.trim();
+const apiUrl = process.env.VIN_API_URL?.trim();
 
 if (!token || token.length < 20) {
   throw new Error("VIN_TOKEN is missing or invalid.");
@@ -75,9 +75,12 @@ async function fetchDay(date) {
 
   const response = await fetch(url, {
     headers: {
-      accept: "application/json",
+      accept: "application/json, text/plain, */*",
+      "accept-language": "en-GB,en-US;q=0.9,en;q=0.8",
       authorization: `Bearer ${token}`,
+      "cache-control": "no-store",
       language: "vi",
+      languageid: "1",
     },
     signal: AbortSignal.timeout(20_000),
   });
