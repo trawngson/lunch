@@ -85,6 +85,11 @@ async function fetchDay(date) {
     signal: AbortSignal.timeout(20_000),
   });
 
+  if (response.status === 400) {
+    console.log(`No menu published for ${isoDate(date)}.`);
+    return { date: isoDate(date), meals: [] };
+  }
+
   if (!response.ok) {
     throw new Error(`Menu request failed for ${isoDate(date)} with HTTP ${response.status}.`);
   }
