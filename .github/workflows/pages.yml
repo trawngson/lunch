@@ -4,7 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    - cron: "0 22 * * *"
+    # 17:55 in Vietnam; scheduled runs then wait 5-65 minutes.
+    - cron: "55 10 * * *"
   workflow_dispatch:
 
 permissions:
@@ -19,7 +20,16 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 90
     steps:
+      - name: Randomize scheduled fetch time
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          delay_seconds="$(shuf -i 300-3900 -n 1)"
+          echo "Waiting ${delay_seconds} seconds before the scheduled fetch."
+          sleep "${delay_seconds}"
+
       - name: Check out source
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
