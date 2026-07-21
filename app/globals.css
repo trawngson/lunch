@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --canvas: #dedbd2;
   --paper: #f3f0e8;
   --surface: #fbfaf6;
   --surface-2: #f5f1e8;
@@ -17,7 +18,7 @@
 }
 
 html {
-  background: #dedbd2;
+  background: var(--canvas);
 }
 
 body {
@@ -25,9 +26,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.82), transparent 34%),
-    #dedbd2;
+  background: var(--canvas);
   font-family: "Avenir Next", Avenir, "Segoe UI", sans-serif;
 }
 
