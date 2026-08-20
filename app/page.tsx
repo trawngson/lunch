@@ -28,9 +28,8 @@ type MenuData = {
 const dataPath = process.env.NEXT_PUBLIC_MENU_PATH ?? "/api/menu";
 const counterBaseUrl = (
   process.env.NEXT_PUBLIC_VISIT_COUNTER_BASE_URL ??
-  "https://api.counterapi.dev/v1"
+  "https://countapi.mileshilliard.com/api/v1"
 ).replace(/\/$/, "");
-const counterNamespace = "lunch-truongson-me";
 const VISIBLE_MENU_DAYS = 6;
 const visitCountRequests = new Map<string, Promise<number>>();
 
@@ -98,9 +97,9 @@ function incrementHungryVisits(date: string) {
   const existingRequest = visitCountRequests.get(date);
   if (existingRequest) return existingRequest;
 
-  const counterName = `hungry-visits-${date}`;
+  const counterName = `lunch_truongson_me_hungry_visits_${date}`;
   const request = fetch(
-    `${counterBaseUrl}/${encodeURIComponent(counterNamespace)}/${encodeURIComponent(counterName)}/up`,
+    `${counterBaseUrl}/hit/${encodeURIComponent(counterName)}`,
     { cache: "no-store" },
   ).then(async (response) => {
     if (!response.ok) throw new Error("Visit counter unavailable");
