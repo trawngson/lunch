@@ -164,6 +164,41 @@ button {
   border-radius: 15px;
 }
 
+.visit-counter {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 10px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px auto 0;
+  padding: 11px 17px;
+  color: #666158;
+  background: rgba(251, 250, 246, 0.86);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(57, 49, 36, 0.05);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.visit-counter::before {
+  width: 6px;
+  height: 6px;
+  content: "";
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.visit-counter strong {
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
 .menu-heading {
   display: flex;
   align-items: center;
@@ -444,6 +479,12 @@ button {
     align-items: flex-start;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .visit-counter {
+    align-items: center;
+    width: 100%;
+    padding: 12px 14px;
   }
 }
 

@@ -26,7 +26,13 @@ type MenuData = {
 };
 
 const dataPath = process.env.NEXT_PUBLIC_MENU_PATH ?? "/api/menu";
-const VISIBLE_MENU_DAYS = 7;
+const counterBaseUrl = (
+  process.env.NEXT_PUBLIC_VISIT_COUNTER_BASE_URL ??
+  "https://api.counterapi.dev/v1"
+).replace(/\/$/, "");
+const counterNamespace = "lunch-truongson-me";
+const VISIBLE_MENU_DAYS = 6;
+const visitCountRequests = new Map<string, Promise<number>>();
 
 function parseDate(isoDate: string) {
   return new Date(`${isoDate}T12:00:00+07:00`);
@@ -71,6 +77,42 @@ function vietnamToday() {
   return `${value("year")}-${value("month")}-${value("day")}`;
 }
 
+function millisecondsUntilNextVietnamDay() {
+  const [year, month, day] = vietnamToday().split("-").map(Number);
+  const nextMidnight = Date.UTC(year, month - 1, day + 1) - 7 * 60 * 60 * 1000;
+  return Math.max(nextMidnight - Date.now(), 1_000);
+}
+
+function counterValue(payload: unknown) {
+  if (!payload || typeof payload !== "object") return null;
+  const record = payload as Record<string, unknown>;
+  const data = record.data && typeof record.data === "object"
+    ? record.data as Record<string, unknown>
+    : null;
+  const value = record.count ?? record.value ?? data?.up_count ?? data?.count;
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(0, Math.round(number)) : null;
+}
+
+function incrementHungryVisits(date: string) {
+  const existingRequest = visitCountRequests.get(date);
+  if (existingRequest) return existingRequest;
+
+  const counterName = `hungry-visits-${date}`;
+  const request = fetch(
+    `${counterBaseUrl}/${encodeURIComponent(counterNamespace)}/${encodeURIComponent(counterName)}/up`,
+    { cache: "no-store" },
+  ).then(async (response) => {
+    if (!response.ok) throw new Error("Visit counter unavailable");
+    const value = counterValue(await response.json());
+    if (value === null) throw new Error("Unexpected visit counter response");
+    return value;
+  });
+
+  visitCountRequests.set(date, request);
+  return request;
+}
+
 function isToday(isoDate: string) {
   return isoDate === vietnamToday();
 }
@@ -85,6 +127,8 @@ export default function LunchMenu() {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [error, setError] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [visitDate, setVisitDate] = useState(vietnamToday);
+  const [visitCount, setVisitCount] = useState<number | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -112,6 +156,33 @@ export default function LunchMenu() {
       cancelled = true;
     };
   }, [reloadKey]);
+
+  useEffect(() => {
+    const timeout = window.setTimeout(
+      () => {
+        setVisitCount(0);
+        setVisitDate(vietnamToday());
+      },
+      millisecondsUntilNextVietnamDay() + 1_000,
+    );
+    return () => window.clearTimeout(timeout);
+  }, [visitDate]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    incrementHungryVisits(visitDate)
+      .then((count) => {
+        if (!cancelled) setVisitCount(count);
+      })
+      .catch(() => {
+        if (!cancelled) setVisitCount(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [visitDate]);
 
   const schoolDays = useMemo(
     () =>
@@ -229,6 +300,11 @@ export default function LunchMenu() {
               </div>
             )}
           </section>
+
+          <aside className="visit-counter" aria-live="polite">
+            <span>Total hungry visits today:</span>
+            <strong>{visitCount === null ? "—" : visitCount.toLocaleString("en-US")}</strong>
+          </aside>
         </>
       )}
     </main>
