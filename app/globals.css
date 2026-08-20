@@ -34,6 +34,11 @@ button {
   font: inherit;
 }
 
+button:not(:disabled),
+[role="button"]:not([aria-disabled="true"]) {
+  cursor: pointer;
+}
+
 .page-shell {
   width: min(1540px, calc(100% - 72px));
   min-height: calc(100vh - 72px);
