@@ -4,8 +4,8 @@ on:
   push:
     branches: [main]
   schedule:
-    # 17:55 in Vietnam; scheduled runs then wait 5-65 minutes.
-    - cron: "55 10 * * *"
+    # 04:55 in Vietnam; the randomized delay starts the fetch between 05:00-06:00.
+    - cron: "55 21 * * *"
   workflow_dispatch:
 
 permissions:

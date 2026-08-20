@@ -3,6 +3,7 @@ import sampleMenu from "../../../public/menu.json";
 export const dynamic = "force-static";
 
 const TIME_ZONE = "Asia/Ho_Chi_Minh";
+const MENU_DAY_BUFFER = 8;
 
 function vietnamToday() {
   const parts = new Intl.DateTimeFormat("en-US", {
@@ -36,6 +37,22 @@ function apiDate(date: { year: number; month: number; day: number }) {
 function isWeekday(date: { year: number; month: number; day: number }) {
   const weekday = new Date(Date.UTC(date.year, date.month - 1, date.day, 12)).getUTCDay();
   return weekday !== 0 && weekday !== 6;
+}
+
+function nextWeekdays(
+  date: { year: number; month: number; day: number },
+  count: number,
+) {
+  const dates = [];
+  let offset = 0;
+
+  while (dates.length < count) {
+    const candidate = addDays(date, offset);
+    if (isWeekday(candidate)) dates.push(candidate);
+    offset += 1;
+  }
+
+  return dates;
 }
 
 function cleanText(value: unknown) {
@@ -107,8 +124,7 @@ export async function GET() {
 
   try {
     const today = vietnamToday();
-    const dates = Array.from({ length: 8 }, (_, offset) => addDays(today, offset))
-      .filter(isWeekday);
+    const dates = nextWeekdays(today, MENU_DAY_BUFFER);
     const days = await Promise.all(
       dates.map((date) => fetchDay(date, token, studentCode, apiUrl)),
     );

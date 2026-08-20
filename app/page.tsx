@@ -26,6 +26,7 @@ type MenuData = {
 };
 
 const dataPath = process.env.NEXT_PUBLIC_MENU_PATH ?? "/api/menu";
+const VISIBLE_MENU_DAYS = 7;
 
 function parseDate(isoDate: string) {
   return new Date(`${isoDate}T12:00:00+07:00`);
@@ -58,7 +59,7 @@ function kcal(value: number | null) {
   return value === null ? "—" : `${Math.round(value)} kcal`;
 }
 
-function isToday(isoDate: string) {
+function vietnamToday() {
   const parts = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "2-digit",
@@ -67,7 +68,11 @@ function isToday(isoDate: string) {
   }).formatToParts(new Date());
   const value = (type: Intl.DateTimeFormatPartTypes) =>
     parts.find((part) => part.type === type)?.value;
-  return isoDate === `${value("year")}-${value("month")}-${value("day")}`;
+  return `${value("year")}-${value("month")}-${value("day")}`;
+}
+
+function isToday(isoDate: string) {
+  return isoDate === vietnamToday();
 }
 
 function isFeaturedDay(isoDate: string) {
@@ -110,10 +115,12 @@ export default function LunchMenu() {
 
   const schoolDays = useMemo(
     () =>
-      menu?.days.filter((day) => {
-        const weekday = parseDate(day.date).getUTCDay();
-        return weekday !== 0 && weekday !== 6;
-      }) ?? [],
+      menu?.days
+        .filter((day) => {
+          const weekday = parseDate(day.date).getUTCDay();
+          return weekday !== 0 && weekday !== 6 && day.date >= vietnamToday();
+        })
+        .slice(0, VISIBLE_MENU_DAYS) ?? [],
     [menu],
   );
   const selectedDay = schoolDays[selectedIndex] ?? null;
@@ -208,7 +215,7 @@ export default function LunchMenu() {
                       {meal.dishes.map((dish, dishIndex) => (
                         <div className="dish-row" key={`${selectedDay.date}-${dish.name}-${dishIndex}`}>
                           <span
-                            className={dish.name.toLocaleLowerCase("vi").includes("kem") ? "dish-name special-treat" : "dish-name"}
+                            className={dish.name.startsWith("Kem") ? "dish-name special-treat" : "dish-name"}
                             data-text={dish.name}
                           >
                             {dish.name}

@@ -1,6 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 
 const TIME_ZONE = "Asia/Ho_Chi_Minh";
+const MENU_DAY_BUFFER = 8;
 const token = process.env.VIN_TOKEN?.trim().replace(/^Bearer\s+/i, "");
 const studentCode = process.env.VIN_STUDENT_CODE?.trim();
 const apiUrl = process.env.VIN_API_URL?.trim();
@@ -107,13 +108,15 @@ async function fetchDay(date) {
 
 const today = vietnamToday();
 const days = [];
+let offset = 0;
 
-for (let offset = 0; offset < 8; offset += 1) {
+while (days.length < MENU_DAY_BUFFER) {
   const date = addDays(today, offset);
   const weekday = new Date(Date.UTC(date.year, date.month - 1, date.day, 12)).getUTCDay();
   if (weekday !== 0 && weekday !== 6) {
     days.push(await fetchDay(date));
   }
+  offset += 1;
 }
 
 const publicMenu = {
