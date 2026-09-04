@@ -60,15 +60,30 @@ button:not(:disabled),
   gap: 24px;
 }
 
-.site-header h1 {
+.wordmark {
+  display: flex;
+  align-items: baseline;
   margin: 0;
+  white-space: nowrap;
+}
+
+.wordmark-name {
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(2rem, 3vw, 3.15rem);
   font-weight: 700;
   letter-spacing: -0.045em;
 }
 
-.site-header h1 span {
+.wordmark-domain {
+  margin-left: 0.14em;
+  color: #666158;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: clamp(0.68rem, 1.05vw, 0.92rem);
+  font-weight: 600;
+  letter-spacing: 0.035em;
+}
+
+.wordmark-domain > span {
   color: var(--accent);
 }
 

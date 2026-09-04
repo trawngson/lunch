@@ -206,7 +206,10 @@ export default function LunchMenu() {
   return (
     <main className="page-shell">
       <header className="site-header">
-        <h1>lunch<span>.</span></h1>
+        <h1 className="wordmark" aria-label="lunch dot truongson dot me">
+          <span className="wordmark-name">lunch</span>
+          <span className="wordmark-domain"><span>.</span>truongson.me</span>
+        </h1>
         {schoolDays.length > 0 && (
           <div className="week-range" aria-label="Displayed date range">
             {new Intl.DateTimeFormat("en-US", {
