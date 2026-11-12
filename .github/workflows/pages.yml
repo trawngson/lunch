@@ -82,3 +82,18 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
+
+  keepalive:
+    # A public repo's scheduled workflow is auto-disabled after 60 days without
+    # repository activity, and daily runs do not count as activity. Re-enabling
+    # the workflow on every scheduled run resets that 60-day timer, so the cron
+    # keeps firing without needing commits pushed to the repo.
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    steps:
+      - name: Reset the inactivity timer
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method PUT "repos/${{ github.repository }}/actions/workflows/pages.yml/enable"
